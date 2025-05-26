@@ -1,0 +1,290 @@
+package part2;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import javax.swing.JOptionPane;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+public class Part2 {
+
+    public static void main(String[] args) {
+        QuickChatApp.main(args);
+    }
+}
+
+class Message {
+    private static final List<Message> sentMessages = new ArrayList<>();
+    private static final List<Message> storedMessages = new ArrayList<>();
+    private static int totalMessages = 0;
+    
+    private final String messageId;
+    private final int numSent;
+    private final String recipient;
+    private final String content;
+    private final String messageHash;
+    private boolean isSent;
+    private boolean isStored;
+    
+    public Message(String recipient, String content) {
+        this.messageId = generateMessageId();
+        this.numSent = ++totalMessages;
+        this.recipient = recipient;
+        this.content = content;
+        this.messageHash = createMessageHash();
+        this.isSent = false;
+        this.isStored = false;
+    }
+    
+    private String generateMessageId() {
+        Random rand = new Random();
+        long id = 1000000000L + rand.nextInt(900000000);
+        return String.valueOf(id);
+    }
+    
+    public boolean checkMessageID() {
+        return this.messageId.length() <= 10;
+    }
+    
+    public int checkRecipientCell() {
+        if (recipient == null || recipient.isEmpty()) {
+            return -1;
+        }
+        
+        String cleaned = recipient.replaceAll("[^+0-9]", "");
+        
+        if (!cleaned.startsWith("+") && !cleaned.startsWith("00")) {
+            return -1;
+        }
+        
+        if (cleaned.length() > 13 || cleaned.length() < 10) {
+            return -1;
+        }
+        
+        return 0;
+    }
+    
+    private String createMessageHash() {
+        String[] words = content.split("\\s+");
+        String firstWord = words.length > 0 ? words[0] : "";
+        String lastWord = words.length > 1 ? words[words.length-1] : firstWord;
+        
+        return (messageId.substring(0, 2) + ":" + numSent + ":" + 
+               firstWord.toUpperCase() + lastWord.toUpperCase());
+    }
+    
+    public String sentMessage() {
+        String[] options = {"Send Message", "Disregard Message", "Store Message", "Store in JSON"};
+        int choice = JOptionPane.showOptionDialog(null, 
+            "What would you like to do with this message?",
+            "Message Options",
+            JOptionPane.DEFAULT_OPTION, 
+            JOptionPane.INFORMATION_MESSAGE,
+            null, 
+            options, 
+            options[0]);
+        
+        switch(choice) {
+            case 0 -> {
+                // Send
+                this.isSent = true;
+                sentMessages.add(this);
+                showMessageDetails();
+                return "Message successfully sent.";
+            }
+            case 1 -> {
+                // Disregard
+                return "Press 0 to delete message.";
+            }
+            case 2 -> {
+                // Store
+                this.isStored = true;
+                storedMessages.add(this);
+                return "Message successfully stored.";
+            }
+            case 3 -> {
+                // Store in JSON
+                storeMessageToJson();
+                return "Message successfully stored in JSON.";
+            }
+            default -> {
+                return "Operation cancelled.";
+            }
+        }
+    }
+    
+    private void showMessageDetails() {
+        String details = """
+                         Message Details:
+                         ID: """ + messageId + "\n" +
+            "Hash: " + messageHash + "\n" +
+            "To: " + recipient + "\n" +
+            "Message: " + content;
+        
+        JOptionPane.showMessageDialog(null, details);
+    }
+    
+    public static String printMessages() {
+        StringBuilder sb = new StringBuilder();
+        for (Message msg : sentMessages) {
+            sb.append("ID: ").append(msg.messageId)
+              .append("\nHash: ").append(msg.messageHash)
+              .append("\nTo: ").append(msg.recipient)
+              .append("\nMessage: ").append(msg.content)
+              .append("\n\n");
+        }
+        return sb.toString();
+    }
+    
+    public static int returnTotalMessages() {
+        return sentMessages.size();
+    }
+    
+    private void storeMessageToJson() {
+        JSONObject json = new JSONObject();
+        json.put("messageId", this.messageId);
+        json.put("numSent", this.numSent);
+        json.put("recipient", this.recipient);
+        json.put("content", this.content);
+        json.put("messageHash", this.messageHash);
+        
+        try {
+            Files.createDirectories(Paths.get("messages"));
+            try (FileWriter file = new FileWriter("messages/message_" + messageId + ".json")) {
+                file.write(json.toString());
+                file.flush();
+            }
+            this.isStored = true;
+            storedMessages.add(this);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Error storing message: " + e.getMessage());
+        }
+    }
+    
+    public String getMessageId() { return messageId; }
+    public int getNumSent() { return numSent; }
+    public String getRecipient() { return recipient; }
+    public String getContent() { return content; }
+    public String getMessageHash() { return messageHash; }
+    public boolean isSent() { return isSent; }
+    public boolean isStored() { return isStored; }
+}
+
+class QuickChatApp {
+    private static boolean isLoggedIn = false;
+    
+    public static void main(String[] args) {
+        isLoggedIn = loginUser();
+        
+        if (!isLoggedIn) {
+            JOptionPane.showMessageDialog(null, "Login failed. Exiting application.");
+            return;
+        }
+        
+        JOptionPane.showMessageDialog(null, "Welcome to QuickChat.");
+        
+        boolean running = true;
+        while (running) {
+            String input = JOptionPane.showInputDialog("""
+                                                       Choose an option:
+                                                       1) Send Messages
+                                                       2) Show recently sent messages
+                                                       3) Quit""");
+            
+            if (input == null) {
+                running = false;
+                continue;
+            }
+            
+            try {
+                int choice = Integer.parseInt(input);
+                
+                switch(choice) {
+                    case 1 -> sendMessages();
+                    case 2 -> {
+                        if (Message.returnTotalMessages() > 0) {
+                            JOptionPane.showMessageDialog(null, Message.printMessages());
+                        } else {
+                            JOptionPane.showMessageDialog(null, "No messages sent yet.");
+                        }
+                    }
+                    case 3 -> {
+                        running = false;
+                        JOptionPane.showMessageDialog(null,
+                                "Total messages sent in this session: " + Message.returnTotalMessages());
+                    }
+                    default -> JOptionPane.showMessageDialog(null, "Invalid option. Please try again.");
+                }
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Please enter a valid number.");
+            }
+        }
+    }
+    
+    private static boolean loginUser() {
+        String username = JOptionPane.showInputDialog("Enter username:");
+        if (username == null || username.isEmpty()) {
+            return false;
+        }
+        
+        String password = JOptionPane.showInputDialog("Enter password:");
+        return password != null && !password.isEmpty();
+    }
+    
+    private static void sendMessages() {
+        String numMsgInput = JOptionPane.showInputDialog(
+            "How many messages would you like to send?");
+        
+        if (numMsgInput == null) return;
+        
+        try {
+            int numMessages = Integer.parseInt(numMsgInput);
+            
+            for (int i = 0; i < numMessages; i++) {
+                String recipient = JOptionPane.showInputDialog(
+                    "Enter recipient phone number (with international code, e.g., +27718693002):");
+                
+                if (recipient == null) {
+                    return;
+                }
+                
+                String content = JOptionPane.showInputDialog(
+                    "Enter your message (max 250 characters):");
+                
+                if (content == null) {
+                    return;
+                }
+                
+                if (content.length() > 250) {
+                    JOptionPane.showMessageDialog(null, 
+                        "Message exceeds 250 characters by " + (content.length() - 250) + 
+                        ", please reduce size.");
+                    i--;
+                    continue;
+                }
+                
+                Message msg = new Message(recipient, content);
+                
+                if (msg.checkRecipientCell() != 0) {
+                    JOptionPane.showMessageDialog(null, 
+                        "Cell phone number is incorrectly formatted or does not contain " +
+                        "an international code. Please correct the number and try again.");
+                    i--;
+                    continue;
+                }
+                
+                String result = msg.sentMessage();
+                JOptionPane.showMessageDialog(null, result);
+            }
+            
+            JOptionPane.showMessageDialog(null, 
+                "Total messages sent in this session: " + Message.returnTotalMessages());
+            
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Please enter a valid number of messages.");
+        }
+    }
+}
