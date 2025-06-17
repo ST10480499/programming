@@ -1,0 +1,547 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
+ */
+
+
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+
+    private static void bubbleSort(int[] bubbleArray) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+    private static class arr {
+
+        private static int length;
+
+        public arr() {
+        }
+    }
+/**
+ *
+ * @author khoza
+ */
+public class PART3 {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        // TODO code application logic here
+    }
+    
+}
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
+ */
+
+
+
+/**
+ * Comprehensive Java Algorithm Solutions
+ * Ready for Apache NetBeans IDE
+ * 
+ * @author khoza
+ */ 
+
+    // ==============================================
+    // SORTING ALGORITHMS
+    // ==============================================
+    
+    /**
+     * Bubble Sort - O(n²) time complexity
+     * Good for small datasets or educational purposes
+     * @param arr array to be sorted
+     */
+    
+        int n = arr.length;
+       
+            boolean swapped = false;
+           
+                
+                    // Swap elements
+                   
+                 
+                   
+                   
+                
+            
+            // If no swapping occurred, array is sorted
+           
+        
+    
+    
+    /**
+     * Quick Sort - O(n log n) average case
+     * Efficient divide-and-conquer algorithm
+     * @param arr array to be sorted
+     * @param low starting index
+     * @param high ending index
+     */
+    public static void quickSort(int[] arr, int low, int high) {
+        if (low < high) {
+            int pi = partition(arr, low, high);
+            quickSort(arr, low, pi - 1);
+            quickSort(arr, pi + 1, high);
+        }
+    }
+    
+    /**
+     * Partition method for Quick Sort
+     * @param arr array to partition
+     * @param low low index
+     * @param high high index
+     * @return partition index
+     */
+    private static int partition(int[] arr, int low, int high) {
+        int pivot = arr[high];
+        int i = (low - 1);
+        
+        for (int j = low; j < high; j++) {
+            if (arr[j] <= pivot) {
+                i++;
+                int temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+            }
+        }
+        
+        int temp = arr[i + 1];
+        arr[i + 1] = arr[high];
+        arr[high] = temp;
+        
+        return i + 1;
+    }
+    
+    /**
+     * Merge Sort - O(n log n) guaranteed
+     * Stable sorting algorithm
+     * @param arr array to be sorted
+     * @param left left index
+     * @param right right index
+     */
+    public static void mergeSort(int[] arr, int left, int right) {
+        if (left < right) {
+            int mid = left + (right - left) / 2;
+            mergeSort(arr, left, mid);
+            mergeSort(arr, mid + 1, right);
+            merge(arr, left, mid, right);
+        }
+    }
+    
+    /**
+     * Merge method for Merge Sort
+     * @param arr array to merge
+     * @param left left index
+     * @param mid middle index
+     * @param right right index
+     */
+    private static void merge(int[] arr, int left, int mid, int right) {
+        int n1 = mid - left + 1;
+        int n2 = right - mid;
+        
+        int[] leftArr = new int[n1];
+        int[] rightArr = new int[n2];
+        
+        System.arraycopy(arr, left, leftArr, 0, n1);
+        System.arraycopy(arr, mid + 1, rightArr, 0, n2);
+        
+        int i = 0, j = 0, k = left;
+        
+        while (i < n1 && j < n2) {
+            if (leftArr[i] <= rightArr[j]) {
+                arr[k] = leftArr[i];
+                i++;
+            } else {
+                arr[k] = rightArr[j];
+                j++;
+            }
+            k++;
+        }
+        
+        while (i < n1) {
+            arr[k] = leftArr[i];
+            i++;
+            k++;
+        }
+        
+        while (j < n2) {
+            arr[k] = rightArr[j];
+            j++;
+            k++;
+        }
+    }
+    
+    // ==============================================
+    // SEARCHING ALGORITHMS
+    // ==============================================
+    
+    /**
+     * Binary Search - O(log n) time complexity
+     * Requires sorted array
+     * @param arr sorted array to search
+     * @param target value to find
+     * @return index of target or -1 if not found
+     */
+    public static int binarySearch(int[] arr, int target) {
+        int left = 0, right = arr.length - 1;
+        
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            
+            if (arr[mid] == target) {
+                return mid;
+            }
+            
+            if (arr[mid] < target) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
+        }
+        
+        return -1; // Element not found
+    }
+    
+    /**
+     * Linear Search - O(n) time complexity
+     * Works on unsorted arrays
+     * @param arr array to search
+     * @param target value to find
+     * @return index of target or -1 if not found
+     */
+    public static int linearSearch(int[] arr, int target) {
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] == target) {
+                return i;
+            }
+        }
+        return -1; // Element not found
+    }
+    
+    // ==============================================
+    // ARRAY MANIPULATION ALGORITHMS
+    // ==============================================
+    
+    /**
+     * Find maximum element in array
+     * @param arr input array
+     * @return maximum value
+     */
+    public static int findMax(int[] arr) {
+        if (arr.length == 0) throw new IllegalArgumentException("Array is empty");
+        
+        int max = arr[0];
+        for (int i = 1; i < arr.length; i++) {
+            if (arr[i] > max) {
+                max = arr[i];
+            }
+        }
+        return max;
+    }
+    
+    /**
+     * Find minimum element in array
+     * @param arr input array
+     * @return minimum value
+     */
+    public static int findMin(int[] arr) {
+        if (arr.length == 0) throw new IllegalArgumentException("Array is empty");
+        
+        int min = arr[0];
+        for (int i = 1; i < arr.length; i++) {
+            if (arr[i] < min) {
+                min = arr[i];
+            }
+        }
+        return min;
+    }
+    
+    /**
+     * Reverse an array in-place
+     * @param arr array to reverse
+     */
+    public static void reverseArray(int[] arr) {
+        int start = 0;
+        int end = arr.length - 1;
+        
+        while (start < end) {
+            int temp = arr[start];
+            arr[start] = arr[end];
+            arr[end] = temp;
+            start++;
+            end--;
+        }
+    }
+    
+    /**
+     * Remove duplicates from sorted array
+     * Returns new length of array
+     * @param arr sorted array
+     * @return new length after removing duplicates
+     */
+    public static int removeDuplicates(int[] arr) {
+        if (arr.length == 0) return 0;
+        
+        int j = 0;
+        for (int i = 1; i < arr.length; i++) {
+            if (arr[i] != arr[j]) {
+                j++;
+                arr[j] = arr[i];
+            }
+        }
+        return j + 1;
+    }
+    
+    // ==============================================
+    // STRING ALGORITHMS
+    // ==============================================
+    
+    /**
+     * Check if string is palindrome
+     * @param str input string
+     * @return true if palindrome, false otherwise
+     */
+    public static boolean isPalindrome(String str) {
+        str = str.toLowerCase().replaceAll("[^a-zA-Z0-9]", "");
+        int left = 0, right = str.length() - 1;
+        
+        while (left < right) {
+            if (str.charAt(left) != str.charAt(right)) {
+                return false;
+            }
+            left++;
+            right--;
+        }
+        return true;
+    }
+    
+    /**
+     * Count character frequency in string
+     * @param str input string
+     * @return map of character frequencies
+     */
+    public static Map<Character, Integer> charFrequency(String str) {
+        Map<Character, Integer> freq = new HashMap<>();
+        
+        for (char c : str.toCharArray()) {
+            freq.put(c, freq.getOrDefault(c, 0) + 1);
+        }
+        
+        return freq;
+    }
+    
+    // ==============================================
+    // MATHEMATICAL ALGORITHMS
+    // ==============================================
+    
+    /**
+     * Calculate factorial recursively
+     * @param n input number
+     * @return factorial of n
+     */
+    public static long factorial(int n) {
+        if (n < 0) throw new IllegalArgumentException("Negative number");
+        if (n == 0 || n == 1) return 1;
+        return n * factorial(n - 1);
+    }
+    
+    /**
+     * Calculate factorial iteratively
+     * @param n input number
+     * @return factorial of n
+     */
+    public static long factorialIterative(int n) {
+        if (n < 0) throw new IllegalArgumentException("Negative number");
+        long result = 1;
+        for (int i = 2; i <= n; i++) {
+            result *= i;
+        }
+        return result;
+    }
+    
+    /**
+     * Calculate Fibonacci number recursively
+     * @param n position in Fibonacci sequence
+     * @return Fibonacci number at position n
+     */
+    public static int fibonacci(int n) {
+        if (n <= 1) return n;
+        return fibonacci(n - 1) + fibonacci(n - 2);
+    }
+    
+    /**
+     * Calculate Fibonacci number iteratively (more efficient)
+     * @param n position in Fibonacci sequence
+     * @return Fibonacci number at position n
+     */
+    public static int fibonacciIterative(int n) {
+        if (n <= 1) return n;
+        
+        int a = 0, b = 1;
+        for (int i = 2; i <= n; i++) {
+            int temp = a + b;
+            a = b;
+            b = temp;
+        }
+        return b;
+    }
+    
+    /**
+     * Check if number is prime
+     * @param n number to check
+     * @return true if prime, false otherwise
+     */
+    public static boolean isPrime(int n) {
+        if (n <= 1) return false;
+        if (n <= 3) return true;
+        if (n % 2 == 0 || n % 3 == 0) return false;
+        
+        for (int i = 5; i * i <= n; i += 6) {
+            if (n % i == 0 || n % (i + 2) == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    /**
+     * Calculate Greatest Common Divisor using Euclidean algorithm
+     * @param a first number
+     * @param b second number
+     * @return GCD of a and b
+     */
+    public static int gcd(int a, int b) {
+        if (b == 0) return a;
+        return gcd(b, a % b);
+    }
+    
+    /**
+     * Calculate Least Common Multiple
+     * @param a first number
+     * @param b second number
+     * @return LCM of a and b
+     */
+    public static int lcm(int a, int b) {
+        return (a * b) / gcd(a, b);
+    }
+    
+    // ==============================================
+    // UTILITY METHODS
+    // ==============================================
+    
+    /**
+     * Print array elements
+     * @param arr array to print
+     */
+    public static void printArray(int[] arr) {
+        System.out.println(Arrays.toString(arr));
+    }
+    
+    /**
+     * Generate random array for testing
+     * @param size size of array
+     * @param maxValue maximum value for elements
+     * @return randomly generated array
+     */
+    public static int[] generateRandomArray(int size, int maxValue) {
+        Random rand = new Random();
+        int[] arr = new int[size];
+        for (int i = 0; i < size; i++) {
+            arr[i] = rand.nextInt(maxValue);
+        }
+        return arr;
+    }
+    
+    /**
+     * Copy array
+     * @param original original array
+     * @return copy of the array
+     */
+    public static int[] copyArray(int[] original) {
+        return Arrays.copyOf(original, original.length);
+    }
+    
+    // ==============================================
+    // MAIN METHOD FOR TESTING
+    // ==============================================
+    
+    /**
+     * Main method to demonstrate all algorithms
+     * @param args command line arguments
+     */
+    public static void main(String[] args) {
+        System.out.println("=== ALGORITHM SOLUTIONS DEMO ===\n");
+        
+        // Test sorting algorithms
+        System.out.println("=== SORTING ALGORITHMS ===");
+        int[] testArray = {64, 34, 25, 12, 22, 11, 90};
+        System.out.println("Original array:");
+        printArray(testArray);
+        
+        int[] bubbleArray = copyArray(testArray);
+        bubbleSort(bubbleArray);
+        System.out.println("Bubble sorted:");
+        printArray(bubbleArray);
+        
+        int[] quickArray = copyArray(testArray);
+        quickSort(quickArray, 0, quickArray.length - 1);
+        System.out.println("Quick sorted:");
+        printArray(quickArray);
+        
+        int[] mergeArray = copyArray(testArray);
+        mergeSort(mergeArray, 0, mergeArray.length - 1);
+        System.out.println("Merge sorted:");
+        printArray(mergeArray);
+        
+        // Test searching algorithms
+        System.out.println("\n=== SEARCHING ALGORITHMS ===");
+        int[] sortedArray = {1, 3, 5, 7, 9, 11, 13, 15};
+        int target = 7;
+        System.out.println("Searching for " + target + " in: " + Arrays.toString(sortedArray));
+        System.out.println("Binary search result: " + binarySearch(sortedArray, target));
+        System.out.println("Linear search result: " + linearSearch(sortedArray, target));
+        
+        // Test array manipulation
+        System.out.println("\n=== ARRAY MANIPULATION ===");
+        int[] manipArray = {5, 2, 8, 1, 9, 3};
+        System.out.println("Array: " + Arrays.toString(manipArray));
+        System.out.println("Maximum: " + findMax(manipArray));
+        System.out.println("Minimum: " + findMin(manipArray));
+        
+        int[] reverseArray = copyArray(manipArray);
+        reverseArray(reverseArray);
+        System.out.println("Reversed: " + Arrays.toString(reverseArray));
+        
+        // Test mathematical functions
+        System.out.println("\n=== MATHEMATICAL ALGORITHMS ===");
+        System.out.println("Factorial of 5: " + factorial(5));
+        System.out.println("Factorial of 5 (iterative): " + factorialIterative(5));
+        System.out.println("Fibonacci of 10: " + fibonacciIterative(10));
+        System.out.println("Is 17 prime? " + isPrime(17));
+        System.out.println("Is 20 prime? " + isPrime(20));
+        System.out.println("GCD of 48 and 18: " + gcd(48, 18));
+        System.out.println("LCM of 12 and 18: " + lcm(12, 18));
+        
+        // Test string functions
+        System.out.println("\n=== STRING ALGORITHMS ===");
+        System.out.println("Is 'racecar' palindrome? " + isPalindrome("racecar"));
+        System.out.println("Is 'hello' palindrome? " + isPalindrome("hello"));
+        System.out.println("Character frequency in 'hello':");
+        System.out.println(charFrequency("hello"));
+        
+        // Performance test with larger array
+        System.out.println("\n=== PERFORMANCE TEST ===");
+        int[] largeArray = generateRandomArray(1000, 1000);
+        System.out.println("Generated random array of size 1000");
+        
+        long startTime = System.nanoTime();
+        quickSort(largeArray, 0, largeArray.length - 1);
+        long endTime = System.nanoTime();
+        System.out.println("Quick sort took: " + (endTime - startTime) / 1000000.0 + " ms");
+        
+        System.out.println("\n=== DEMO COMPLETE ===");
+    }
